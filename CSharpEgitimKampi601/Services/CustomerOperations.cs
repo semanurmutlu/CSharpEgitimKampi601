@@ -68,8 +68,26 @@ namespace CSharpEgitimKampi601.Services
                 .Set("CustomerSurname", customer.CustomerSurname)
                 .Set("CustomerCity", customer.CustomerCity)
                 .Set("CustomerBalance", customer.CustomerBalance)
-                .Set("CustomerSoppingCount", customer.CustomerShoppingCount);
+                .Set("CustomerShoppingCount", customer.CustomerShoppingCount);
             customerCollection.UpdateOne(filter,updatedValue);
+        }
+
+        public Customer GetCustomerById(string id)
+        {
+            var connection = new MongoDbConnection();
+            var customerCollection = connection.GetCustomersCollection();
+            var filter = Builders<BsonDocument>.Filter.Eq("_id", ObjectId.Parse(id));
+            var result=customerCollection.Find(filter).FirstOrDefault();
+            return new Customer
+            {
+                CustomerBalance = decimal.Parse(result["CustomerBalance"].ToString()),
+                CustomerCity = result["CustomerCity"].ToString(),
+                CustomerId = id,
+                CustomerName = result["CustomerName"].ToString(),
+                CustomerShoppingCount = int.Parse(result["CustomerShoppingCount"].ToString()),
+                CustomerSurname = result["CustomerSurname"].ToString()
+            };
+
         }
     
     }
